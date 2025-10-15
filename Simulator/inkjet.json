@@ -1,0 +1,58 @@
+{
+    "protocol_name": "Inkjet ASCII Protocol",
+    "message_terminator": ["ESC", "CR", "LF"],
+    "commands": [
+      {
+        "name": "TXC",
+        "description": "텍스트 인쇄 요청",
+        "parameters": [
+          { "name": "posX", "type": "int", "range": "0-9999", "default": 0 },
+          { "name": "posY", "type": "int", "range": "0-999", "default": 0 },
+          { "name": "textSize", "type": "int", "range": "1-999", "default": 10 },
+          { "name": "font", "type": "int", "enum": { "0": "나눔고딕", "1": "나눔바른고딕", "2": "나눔명조" }, "default": 0 },
+          { "name": "text", "type": "string", "maxLength": 100 }
+        ],
+        "format": "[ESC]TXC(posX,posY,textSize,font,text)[CR][LF]",
+        "response_success": "[ESC]MGN OK : 1[CR][LF]",
+        "response_error": "[ESC]AAA ER : Unknown protocol[CR][LF]"
+      },
+      {
+        "name": "BSC",
+        "description": "바코드 인쇄 요청",
+        "parameters": [
+          { "name": "posX", "type": "int" },
+          { "name": "posY", "type": "int" },
+          { "name": "bcrType", "type": "int" },
+          { "name": "bcrSize", "type": "string" },
+          { "name": "bcrRatio", "type": "int" },
+          { "name": "bcrBotTextDis", "type": "int" },
+          { "name": "bcrBotTextSize", "type": "int" },
+          { "name": "bcrBotTextFont", "type": "int" },
+          { "name": "increment", "type": "int" },
+          { "name": "lapCounter", "type": "int" },
+          { "name": "bcrFormat", "type": "string" }
+        ],
+        "format": "[ESC]BSC(...11 params...)[CR][LF]",
+        "response_success": "[ESC]BSC OK : 1[CR][LF]",
+        "response_error": "[ESC]AAA ER : Invalid barcode[CR][LF]"
+      },
+      {
+        "name": "CTI",
+        "description": "인쇄 횟수 초기화",
+        "parameters": [],
+        "format": "[ESC]CTI[CR][LF]",
+        "response_success": "[ESC]CTI OK[CR][LF]",
+        "response_error": "[ESC]AAA ER : Reset failed[CR][LF]"
+      },
+      {
+        "name": "RUN",
+        "description": "인쇄 시작/중지",
+        "parameters": [
+          { "name": "runSet", "type": "int", "enum": { "0": "Stop", "1": "Start" } }
+        ],
+        "format": "[ESC]RUN(runSet)[CR][LF]",
+        "response_success": "[ESC]RUN OK[CR][LF]"
+      }
+    ]
+  }
+  
