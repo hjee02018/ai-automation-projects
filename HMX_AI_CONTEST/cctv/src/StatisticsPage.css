@@ -1,0 +1,116 @@
+
+  .statistics-page-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background-color: #18191c; /* Dark background matching the UI theme */
+  }
+  
+
+  .statistics-page-content {
+    flex-grow: 1;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    background-color: #1d1f22; /* Slightly lighter than the sidebar */
+    color: #e6e6e6; /* Light text color */
+    max-width: 100%;
+    margin-top: 50px; 
+  }
+  
+  .statistics-page-content h2 {
+    font-size: 35px; /* Set the font size */
+    font-weight: bold; /* Make the text bold */
+    color: #ffffff; /* Set the text color to white for contrast */
+    margin-top: 40px;
+    margin-left: 10px;
+    margin-bottom: 30px; /* Add some space below the heading */
+    letter-spacing: 1px; /* Add some letter spacing */
+    text-transform: uppercase; /* Optional: Make the text uppercase */
+  }
+
+  .search-filters {
+    margin-bottom: 10px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  
+  .search-filters label {
+    color: #e6e6e6; /* Light text color for labels */
+  }
+  
+  
+  .search-filters select {
+    background-color: #2b2e33;
+    border: none;
+    padding: 8px;
+    color: #dad8d8;
+    border-radius: 4px;
+    font-style: normal;
+  }
+
+  .chart-container {
+    display: flex; /* Flexbox 활성화 */
+    flex-direction: row;
+    justify-content: flex-start; 
+    width: 80%;
+  }
+
+  .statistics-chart {
+    display: flex;
+    width: 86%;
+    margin-top: 60px;
+  }
+
+  .bar-chart {
+    margin-top:50px;
+    width: 70%; /* 막대 그래프의 너비 설정 */
+  }
+  
+  .pie-chart {
+    margin-left:30%;
+    width:60%; /* 원형 그래프의 너비를 줄임 */
+  }
+  
+  .statistics-rendering{
+    margin-left: 10px;
+  }
+
+  .statistics-summary {
+    position: static;
+    display: flex; /* Flexbox 활성화 */
+    flex-direction: column; /* 세로로 배치 */
+    gap: 10px; /* 박스 간의 간격 */
+    margin: 20px 0; /* 위아래 여백 */
+  }
+
+
+  .summary-container {
+    position: static;
+    display: flex; /* Flexbox 활성화 */
+    flex-wrap: wrap; /* 줄바꿈 활성화 (필요 시) */
+    gap: 10px; /* 박스 간의 간격 */
+    margin-top: 5px; /* 상단 여백 */
+    margin-bottom: 3px;
+}
+
+  .summary-box {
+      background-color: #f9f9f9; /* 박스 배경색 */
+      /*border: 1px solid #ddd; /* 테두리 색상 */
+      border-radius: 8px; /* 모서리 둥글게 */
+      padding: 15px; /* 내부 여백 */
+      flex: 1 1 calc(25% - 60px); /* 박스 넓이 조정 (4개 한 줄) */
+      min-width: 200px; /* 최소 넓이 설정 */
+      text-align: center; /* 텍스트 중앙 정렬 */
+      color:#d1d2d3;
+      background-color: #2b2e33;
+
+  }
+
+  .summary-box:hover {
+      background-color: #8e8e8e; /* 마우스 호버 시 색상 변경 */
+  } 
+

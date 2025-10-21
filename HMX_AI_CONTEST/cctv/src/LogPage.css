@@ -1,0 +1,264 @@
+.log-page-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background-color: #18191c; /* Dark background matching the UI theme */
+}
+
+.log-page-content {
+  flex-grow: 1;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5px;
+  background-color: #1d1f22; /* Slightly lighter than the sidebar */
+  color: #e6e6e6; /* Light text color */
+  max-width: 100%;
+  margin-top: 50px; 
+}
+
+.log-page-content h2 {
+  font-size: 35px; /* Set the font size */
+  font-weight: bold; /* Make the text bold */
+  color: #ffffff; /* Set the text color to white for contrast */
+  margin-top: 40px;
+  margin-left: 10px;
+  margin-bottom: 30px; /* Add some space below the heading */
+  letter-spacing: 1px; /* Add some letter spacing */
+  text-transform: uppercase; /* Optional: Make the text uppercase */
+}
+
+
+.search-filters {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.search-filters label {
+  color: #e6e6e6; /* Light text color for labels */
+}
+
+
+.search-filters select {
+  background-color: #2b2e33;
+  border: none;
+  padding: 8px;
+  color: white;
+  font-weight: 2000;
+  border-radius: 4px;
+  font-style: normal;
+  width: 200px;
+  height: 36px;
+}
+
+.search-filters button {
+  background-color: #4caf50; /* Matching button color from the screenshot */
+  border: none;
+  padding: 10px 15px;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-filters button:hover {
+  background-color: #1976d2; /* Darker blue on hover */
+}
+
+.search-filters input[type="date"] {
+  background-color: #2b2e33;
+  border: none;
+  padding: 8px;
+  color: #e6e6e6;
+  border-radius: 4px;
+  width: 200px; /* Adjust the width based on your preference */
+  font-size: 15px; /* Ensure the font size is the same as other input elements */
+  font-weight: 600; /* Optional: Makes the text bold */
+  font-style: normal;
+}
+
+/* Placeholder text style for date inputs */
+.search-filters input[type="date"]::placeholder {
+  color: #a1a1a1; /* Light gray color for the placeholder */
+  opacity: 1; /* Ensure placeholder is visible */
+}
+
+/* Hover and focus effects for date input */
+.search-filters input[type="date"]:hover,
+.search-filters input[type="date"]:focus {
+  background-color: #3b3f45; /* Slightly lighter on hover or focus */
+  outline: none; /* Remove default outline on focus */
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.log-table th,
+.log-table td {
+  border: 1px solid #2e2f33;
+  padding: 12px;
+  text-align: left;
+}
+
+.log-table th {
+  background-color: #2e2f33;
+  color: #fff;
+}
+
+.log-table td {
+  background-color: #1f1f23;
+  color: #e6e6e6;
+}
+
+.log-table tr:hover {
+  background-color: #292a2e;
+}
+
+.log-table td.playback-cell {
+  text-align: center;  /* Ensure the button is centered */
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100%; /* Ensure the cell takes the full height of the row */
+  padding: 0; /* Remove padding to ensure button is fully centered */
+}
+
+.log-table td button {
+  background-color: #4caf50;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center; /* Center the pagination items */
+  align-items: center; /* Vertically align the items */
+  gap: 10px; /* Add some space between items */
+}
+
+.pagination button {
+  padding: 8px 12px;
+  background-color: #4caf50; /* Matching button color */
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination select {
+  background-color: #2b2e33;
+  border: none;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  margin-left: 10px; /* Add space between the Next button and the dropdown */
+}
+
+/* Ensuring the Previous, Page, and Next stay together */
+.pagination-prev, 
+.pagination-page, 
+.pagination-next {
+  flex-grow: 0; /* Do not stretch */
+}
+
+.pagination-page {
+  font-weight: bold;
+  margin: 0 15px; /* Add space around the page number */
+}
+
+
+
+/* Date input field style */
+.custom-datepicker, .react-datepicker__input-container input {
+  background-color: #2b2e33;
+  border: none;
+  padding: 5px 10px;  /* Less padding for compact look */
+  color: #e4dfdf;
+  border-radius: 4px;
+  width: 150px;  /* Smaller width */
+  font-size: 14px;  /* Slightly smaller font */
+}
+
+/* Style for the calendar popup */
+.react-datepicker {
+  background-color: #1d1f22;
+  border: 1px solid #4caf50;
+  border-radius: 6px;  /* Slightly rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);  /* Subtle shadow */
+  font-size: 12px;  /* Smaller font for a compact appearance */
+  width: auto; /* Auto width to fit content */
+  max-width: 220px;  /* Ensure the calendar stays compact */
+  max-height: 300px;  /* Set max height to avoid overflow */
+}
+
+/* Style the header of the calendar (Month, Year) */
+.react-datepicker__header {
+  background-color: #4caf50;
+  padding: 5px;  /* Smaller padding for compact look */
+  color: white;
+  font-size: 14px;
+}
+
+/* Day names (Mon, Tue, etc.) */
+.react-datepicker__day-name, .react-datepicker__day {
+  width: 30px;  /* Smaller day cells */
+  height: 30px;
+  line-height: 30px;
+  color: #e6e6e6;
+  font-size: 12px;
+}
+
+/* Hover and selected day styles */
+.react-datepicker__day:hover, .react-datepicker__day--selected {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Compact navigation for next/previous month */
+.react-datepicker__navigation {
+  top: 10px;  /* Align navigation buttons */
+  width: 20px;  /* Smaller navigation buttons */
+  height: 20px;
+}
+
+/* Style for the selected day */
+.react-datepicker__day--selected {
+  background-color: #4caf50 !important;
+  color: white;
+}
+
+/* Adjust the width and placement of the input */
+.custom-datepicker {
+  width: 100px;
+}
+
+/* Custom style for Export to Excel button */
+.export-button {
+  background-color: #2196f3; /* A different color for Excel button (Blue) */
+  color: #fff; /* White text */
+  padding: 10px 15px; /* Padding for the button */
+  border-radius: 4px; /* Rounded corners */
+  border: none; /* Remove border */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-weight: 500; /* Slightly bold text */
+  margin-left : 235px;
+}
+
+.export-button:hover {
+  background-color: #1976d2; /* Darker blue on hover */
+}
+
+.playback-cell {
+  display: flex;          /* Use flexbox to control layout */
+  justify-content: center; /* Center the button horizontally */
+  align-items: center;     /* Center the button vertically */
+  height: 100%;            /* Ensure the div takes the full height of the cell */
+  padding: 0;              /* Remove any extra padding */
+}

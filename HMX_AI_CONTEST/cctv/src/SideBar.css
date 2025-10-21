@@ -1,0 +1,375 @@
+
+.app-container 
+{
+  background-color: #202328;
+  display: flex;
+  flex-direction: column;
+  height: 98vh;
+}
+
+.header 
+{
+  display: flex;
+  background-color: #202328;
+  color: white;
+  padding: 10px 20px;
+  text-align: left;
+  position: fixed;
+  top: 0;
+  width: 97.05%;
+  height: 68px;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 80px;
+}
+
+.logo {
+  height: 40px; /* Adjust the height based on your logo size */
+  margin-right: 30px; /* Space between logo and menu */
+}
+
+.menu {
+  display: flex;
+  gap: 90px; /* Adjust spacing between menu buttons */
+  padding-left: 110px;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-button.active {
+  background-color: #4caf50; /* Active button background color */
+  border-radius: 5px;
+}
+
+.user-icon-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Pushes the user icon to the far right */
+  padding-right: 20px; /* Add some padding to the right */
+}
+
+.user-icon {
+  height: 40px; /* Adjust as per your user icon size */
+  width: 40px;
+  object-fit: cover;
+  filter: invert(1);
+  padding-right: 13px;
+
+}
+
+.content 
+{
+  background-color: #1d1f22;
+  display: flex;
+  margin-top: 0;
+  margin-left: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* 1. 좌측 상단 카메라 리스트*/
+.cctv-list {
+  background-color: #2b3036;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* 2. 홈페이지 좌측 하단 로그 리스트*/
+.log-list 
+{
+  background-color: #2b3036;
+  padding: 0 10px 0 10px;
+  height: 315px;
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  overflow-y: auto;
+}
+
+/* 이벤트 로그 제목 스타일 */
+.log-title 
+{
+  /* margin-left: 6px; */
+  color: #e4e4e4; /* 원하는 색상으로 변경 */
+  font-size: 21px; /* 원하는 크기로 변경 */
+}
+
+.log-list::-webkit-scrollbar {
+  width: 8px; /* Scroll bar width */
+}
+
+.log-list::-webkit-scrollbar-track {
+  background-color: #2b3036; /* Track color */
+  border-radius: 10px; /* Rounded track corners */
+}
+
+.log-list::-webkit-scrollbar-thumb {
+  background-color: #888; /* Scroll thumb color */
+  border-radius: 10px; /* Rounded thumb corners */
+  border: 2px solid #2b3036; /* Adds padding to the thumb */
+}
+
+.log-list::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Change color on hover */
+}
+
+/* CCTV 목록 제목의 스타일 설정 */
+.cctv-title, .log-title {
+  font-size: 18px;
+  color: #ffffff;
+  /* margin-bottom: 10px; */
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-bottom: 5px;
+  text-align: center;
+
+}
+
+
+/* 로그 항목 스타일 */
+.log-item 
+{
+  color: #b32020 !important; /* 강제로 색상 변경 */
+  font-size: 16px !important; /* 강제로 글자 크기 변경 */
+  font-weight: 700;
+  padding: 10px;
+  color: #e6e6e6;
+  font-size: 14px;
+  background-color: #3b3f45;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.log-item:hover {
+  background-color: #4caf50;
+}
+
+.log-item.empty {
+  color: #b32020;
+  font-weight: 700;
+}
+
+
+/* 홈페이지 좌측 리스트 */
+.video-list {
+  display: flex;
+  flex-direction: column; /* CCTV 목록과 로그 목록을 세로로 나열 */
+  width: 265px;
+  background-color: #202328;
+  padding: 10px;
+  padding-top: 20px;
+  height: 875px;
+  overflow: hidden;
+  margin-top: 70px;
+}
+
+
+.video-list ul 
+{
+  list-style: none;
+  padding: 0;
+  /* margin-left: 6px; */
+  /* border: 1px solid #ffefef;  */
+}
+
+.video-list li {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #3b3f45;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  transition: background-color 0.3s;
+}
+
+.video-list li:hover {
+  background-color: #4caf50;
+}
+
+.video-display {
+  flex: 1;
+  margin-top: 55px;
+  margin-bottom: 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #1d1f22;
+}
+.grid-view 
+{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0px; /* 그리드 아이템 간의 간격을 2px로 설정 */
+  width: 100%;
+  height: calc(100vh - 100px);
+  overflow: hidden; /* CCTV 화면이 모서리를 벗어나지 않도록 */
+  background-color: #1d1f22; /* 필요하면 배경 색상 추가 #1b1d21 */
+}
+.grid-item {
+  background-color: #202328;
+  width: 500px; /* 고정된 너비 */
+  height: 240px; /* 고정된 높이 */
+  overflow: hidden; /* 아이템의 크기를 초과한 내용은 숨깁니다. */
+  position: relative; /* 자식 요소의 위치를 상대적으로 설정 */
+}
+
+
+.grid-item img {
+  width: 100%; /* 아이템의 너비에 맞추어 이미지의 너비를 100%로 설정 */
+  height: 100%; /* 아이템의 높이에 맞추어 이미지의 높이를 100%로 설정 */
+  object-fit: cover; /* 비율을 유지하며 아이템을 꽉 채우도록 설정 */
+}
+.selected-video {
+  text-align: center;
+  padding: 0;
+  width: 100%; /* 그리드의 너비에 맞춤 */
+  height: 86%; /* 그리드 전체 높이의 70%를 차지하도록 설정 */
+  position: relative; /* 자식 요소의 위치 설정을 위해 상대적 위치 지정 */
+}
+.selected-video h2 {
+  color: #ebebeb; /* 글자 색상 조정 (필요에 따라 변경 가능) */
+  margin: 0; /* 상단 여백 제거 */
+  padding: 0px 0; /* 패딩 조정 (필요에 따라 변경 가능) */
+}
+.selected-video img 
+{
+  width: 100%; /* 너비를 100%로 설정 */
+  height: auto; /* 높이를 자동으로 조정하여 비율 유지 */
+  max-height: 100%; /* 최대 높이를 100%로 설정하여 공간에 맞춤 */
+  object-fit: contain; /* 비율을 유지하며 꽉 채우도록 설정 */
+  margin-top: 15px; /* 이미지와의 간격을 주기 위해 상단 여백 추가 */
+}
+
+
+.selected-video.blink {
+  border-color: red; /* 깜빡일 때 테두리 색 변경 */
+}
+
+.grid-item {
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+.grid-item.blink {
+  border-color: red;
+}
+
+.selected-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.search-parameter {
+  flex: 1;
+  height: 90px;
+  padding: 10px;
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  text-align: center;
+  background-color: #ddd;
+  align-items: center;
+}
+
+.alarm-container {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100vw; 
+  height: 100vh; 
+  background-color: red; 
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  z-index: 999; 
+}
+
+.alarm-message {
+  color: white; 
+  font-size: 5rem; 
+  text-align: center; 
+  font-weight: bold; 
+}
+
+.chart-container {
+  display: flex; /* Flexbox 활성화 */
+  justify-content: space-between; /* 차트 간의 간격 조정 */
+  align-items: flex-start; /* 수직 정렬 */
+}
+
+.chart 
+{
+  width: 48%; /* 차트의 너비 설정 (필요에 따라 조정) */
+}
+
+/* 화면 깜박이게 -> 미사용*/ 
+/* .blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  background-color: red;
+} */
+
+/* 기존의 blink 효과 삭제 및 border 효과 추가 */
+
+/* .blink {
+  border: 2px solid red; /* 붉은색 테두리 */
+  box-sizing: border-box; /* 테두리 크기 포함 */
+/* } */ 
+
+/* blink 애니메이션 추가 */
+@keyframes blinkBorder {
+  0% {
+    border-color: red;
+  }
+  50% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: red;
+  }
+}
+/* blink 클래스에 애니메이션 적용 */
+.blink {
+  border: 2px solid red;
+  animation: blinkBorder 1s linear infinite; /* 1초마다 깜빡임, 무한 반복 */
+  box-sizing: border-box; /* 테두리 크기 포함 */
+}
+
+/* 애니메이션을 5초 후에 멈추게 하기 위한 설정 */
+.blink.stop-blink {
+  animation: none; /* 깜빡임을 멈춤 */
+}
+
+
+@keyframes blink-animation {
+  to {
+      visibility: hidden;
+  }
+}
