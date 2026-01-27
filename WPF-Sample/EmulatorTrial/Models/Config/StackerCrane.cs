@@ -1,6 +1,6 @@
 ﻿namespace EmulatorTrial.Models
 {
-    public class StackerCrane : EquipmentBase
+    public class StackerCrane : EquipmentConfig
     {
         // 제원 설정 (P2)
         // 스태커 크레인의 물리 동작 및 수치 모델링 클래스

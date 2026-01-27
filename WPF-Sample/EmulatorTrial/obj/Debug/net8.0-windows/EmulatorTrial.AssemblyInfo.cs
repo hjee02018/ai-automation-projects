@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EmulatorTrial")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+80846b03996d777be0a1282e5dd2d4f36e1ddb42")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96a023bfe710dbc730380e80ec9ec69290661afb")]
 [assembly: System.Reflection.AssemblyProductAttribute("EmulatorTrial")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EmulatorTrial")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
