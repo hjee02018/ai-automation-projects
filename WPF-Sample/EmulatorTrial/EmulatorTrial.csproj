@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3796-prerelease" />
   </ItemGroup>
 

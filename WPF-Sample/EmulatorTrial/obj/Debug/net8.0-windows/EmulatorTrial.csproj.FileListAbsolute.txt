@@ -43,3 +43,5 @@ C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\obj\Debug\net8.0-wind
 C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\obj\Debug\net8.0-windows\Emulator.B118B64D.Up2Date
 C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\obj\Debug\net8.0-windows\EmulatorTrial.genruntimeconfig.cache
 C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\obj\Debug\net8.0-windows\ref\EmulatorTrial.dll
+C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\obj\Debug\net8.0-windows\Views\SimulationConfigView.baml
+C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\obj\Debug\net8.0-windows\Views\SimulationConfigView.g.cs

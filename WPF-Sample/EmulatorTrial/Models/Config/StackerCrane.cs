@@ -1,4 +1,10 @@
-﻿namespace EmulatorTrial.Models
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using EmulatorTrial.Models.Config;
+
+
+namespace EmulatorTrial.Models
 {
     public class StackerCrane : EquipmentConfig
     {

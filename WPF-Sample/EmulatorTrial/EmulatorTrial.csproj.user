@@ -19,6 +19,9 @@
     <Compile Update="Views\PerformMonitorView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\SimulationConfigView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainWindow.xaml">
@@ -40,6 +43,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\PerformMonitorView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SimulationConfigView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

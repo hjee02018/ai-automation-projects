@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 C:\Project\ai-automation-projects\WPF-Sample\EmulatorTrial\App.xaml
-7-104947190
+8-974955806
 3-278071704
-19-119306668
+20-1228506475
 201-1118269569
-MainWindow.xaml;Resources\Colors.xaml;Resources\Styles.xaml;Views\CommunicationView.xaml;Views\EquipmentListView.xaml;Views\LogView.xaml;Views\PerformMonitorView.xaml;
+MainWindow.xaml;Resources\Colors.xaml;Resources\Styles.xaml;Views\CommunicationView.xaml;Views\EquipmentListView.xaml;Views\LogView.xaml;Views\PerformMonitorView.xaml;Views\SimulationConfigView.xaml;
 
 False
 
