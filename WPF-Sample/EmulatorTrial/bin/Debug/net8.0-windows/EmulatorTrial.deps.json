@@ -1,0 +1,94 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "EmulatorTrial/1.0.0": {
+        "dependencies": {
+          "Microsoft.Web.WebView2": "1.0.3796-prerelease",
+          "Microsoft.Web.WebView2.Core": "1.0.3796.0",
+          "Microsoft.Web.WebView2.WinForms": "1.0.3796.0",
+          "Microsoft.Web.WebView2.Wpf": "1.0.3796.0"
+        },
+        "runtime": {
+          "EmulatorTrial.dll": {}
+        }
+      },
+      "Microsoft.Web.WebView2/1.0.3796-prerelease": {
+        "runtimeTargets": {
+          "runtimes/win-arm64/native/WebView2Loader.dll": {
+            "rid": "win-arm64",
+            "assetType": "native",
+            "fileVersion": "1.0.3796.0"
+          },
+          "runtimes/win-x64/native/WebView2Loader.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "1.0.3796.0"
+          },
+          "runtimes/win-x86/native/WebView2Loader.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "1.0.3796.0"
+          }
+        }
+      },
+      "Microsoft.Web.WebView2.Core/1.0.3796.0": {
+        "runtime": {
+          "Microsoft.Web.WebView2.Core.dll": {
+            "assemblyVersion": "1.0.3796.0",
+            "fileVersion": "1.0.3796.0"
+          }
+        }
+      },
+      "Microsoft.Web.WebView2.WinForms/1.0.3796.0": {
+        "runtime": {
+          "Microsoft.Web.WebView2.WinForms.dll": {
+            "assemblyVersion": "1.0.3796.0",
+            "fileVersion": "1.0.3796.0"
+          }
+        }
+      },
+      "Microsoft.Web.WebView2.Wpf/1.0.3796.0": {
+        "runtime": {
+          "Microsoft.Web.WebView2.Wpf.dll": {
+            "assemblyVersion": "1.0.3796.0",
+            "fileVersion": "1.0.3796.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "EmulatorTrial/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Web.WebView2/1.0.3796-prerelease": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gXD9147EYLBK2H4r1m6yNKwPEzeUjTJoCdGXnqvBnQOePFFZ6YaQ04PZEHmsPeP+TzteEsQISgyCVAp7FI0JHw==",
+      "path": "microsoft.web.webview2/1.0.3796-prerelease",
+      "hashPath": "microsoft.web.webview2.1.0.3796-prerelease.nupkg.sha512"
+    },
+    "Microsoft.Web.WebView2.Core/1.0.3796.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Web.WebView2.WinForms/1.0.3796.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Web.WebView2.Wpf/1.0.3796.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

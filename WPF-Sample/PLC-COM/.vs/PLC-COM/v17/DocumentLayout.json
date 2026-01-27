@@ -45,8 +45,7 @@
               "ToolTip": "C:\\Project\\ai-automation-projects\\WPF-Sample\\PLC-COM\\MainWindow.xaml",
               "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-20T23:03:00.362Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-20T23:03:00.362Z"
             },
             {
               "$type": "Document",
@@ -56,7 +55,7 @@
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
               "ToolTip": "C:\\Project\\ai-automation-projects\\WPF-Sample\\PLC-COM\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-20T23:02:57.712Z",
               "EditorCaption": ""

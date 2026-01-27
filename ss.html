@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>WCS Full Logistics Flow Simulation</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #0b0b0b; font-family: 'Segoe UI', sans-serif; }
+        
+        /* UI 패널 */
+        #ui-container {
+            position: absolute; top: 20px; left: 20px;
+            pointer-events: none; z-index: 10;
+        }
+        .panel {
+            background: rgba(10, 25, 40, 0.85);
+            border: 1px solid #00d2ff;
+            border-left: 5px solid #00d2ff;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: #fff;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
+            min-width: 250px;
+        }
+        h3 { margin: 0 0 8px 0; color: #00d2ff; font-size: 16px; letter-spacing: 1px; }
+        .row { display: flex; align-items: center; margin-bottom: 6px; font-size: 13px; color: #ccc; }
+        .dot { width: 10px; height: 10px; margin-right: 10px; border-radius: 50%; display: inline-block; }
+        
+        /* 툴팁 (재고 정보 표시용) */
+        #tooltip {
+            position: absolute; display: none;
+            background: rgba(0, 10, 20, 0.95);
+            border: 1px solid #00ff99;
+            padding: 12px; color: #fff; font-size: 12px;
+            z-index: 100; border-radius: 4px; pointer-events: none;
+            line-height: 1.6; box-shadow: 0 0 15px rgba(0, 255, 153, 0.3);
+        }
+        .tp-label { color: #00ff99; font-weight: bold; margin-right: 5px; }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="ui-container">
+        <div class="panel">
+            <h3>📦 물류 흐름 모니터링</h3>
+            <div class="row" style="color:#aaa; font-size:11px; margin-bottom:10px;">
+                Main Warehouse ▶ Common Duct ▶ B-Dong (B1, 2F, 3F)
+            </div>
+            <div class="row"><span class="dot" style="background:#4a90e2;"></span>적재 화물 (43Bay x 14Lvl)</div>
+            <div class="row"><span class="dot" style="background:#00ff00;"></span>이송 중 화물 (Simulation)</div>
+            <div class="row"><span class="dot" style="background:#00ffff;"></span>공동구 터널 (Duct)</div>
+            <div class="row"><span class="dot" style="background:#ff3333;"></span>수직 반송기 (Lifter)</div>
+        </div>
+    </div>
+    
+    <div id="tooltip"></div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+        // --- 1. Scene & Camera ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b0b0b);
+        scene.fog = new THREE.FogExp2(0x0b0b0b, 0.0015);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 3000);
+        camera.position.set(100, 120, 180);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // --- 2. Lights ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(100, 200, 100);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        // --- 3. Fonts ---
+        const fontLoader = new FontLoader();
+        const fontUrl = 'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json';
+
+        function addLabel(text, x, y, z, size=2, color=0xffffff, rotY=0) {
+            fontLoader.load(fontUrl, (font) => {
+                const geo = new TextGeometry(text, { font: font, size: size, height: 0.1 });
+                geo.center();
+                const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: color }));
+                mesh.position.set(x, y, z);
+                mesh.rotation.y = rotY;
+                scene.add(mesh);
+            });
+        }
+
+        // --- 4. Main Warehouse (6호기 / Double Deep) ---
+        const mainGroup = new THREE.Group();
+        mainGroup.position.set(40, 0, 0);
+
+        const AISLES = 6, BAYS = 43, LEVELS = 14, ROW_PER_AISLE = 4;
+        const totalCount = AISLES * ROW_PER_AISLE * BAYS * LEVELS;
+        const palletGeo = new THREE.BoxGeometry(1, 0.8, 1);
+        const palletMat = new THREE.MeshLambertMaterial({ color: 0x4a90e2 });
+        const rackMesh = new THREE.InstancedMesh(palletGeo, palletMat, totalCount);
+        
+        const dummy = new THREE.Object3D();
+        const instanceInfo = []; 
+
+        let idx = 0;
+        for(let a=0; a<AISLES; a++) {
+            const zAisle = (a - AISLES/2 + 0.5) * 14;
+            const rail = new THREE.Mesh(new THREE.BoxGeometry(60, 0.1, 0.6), new THREE.MeshBasicMaterial({color:0x444444}));
+            rail.position.set(0, 0.1, zAisle);
+            mainGroup.add(rail);
+
+            const crane = new THREE.Mesh(new THREE.BoxGeometry(0.8, 10, 0.8), new THREE.MeshLambertMaterial({color:0xffff00}));
+            crane.position.set(Math.random()*40 - 20, 5, zAisle);
+            mainGroup.add(crane);
+
+            for(let r=0; r<ROW_PER_AISLE; r++) {
+                let zOffset = (r===0) ? -2.8 : (r===1) ? -1.6 : (r===2) ? 1.6 : 2.8;
+                for(let b=0; b<BAYS; b++) {
+                    const xPos = (b - BAYS/2) * 1.3;
+                    for(let l=0; l<LEVELS; l++) {
+                        const yPos = l * 1.0 + 1.0;
+                        dummy.position.set(xPos, yPos, zAisle + zOffset);
+                        if(Math.random() > 0.3) {
+                            dummy.scale.set(1,1,1);
+                            dummy.updateMatrix();
+                            rackMesh.setMatrixAt(idx, dummy.matrix);
+                            instanceInfo[idx] = { id: `PLT-${a+1}-${r+1}-${b+1}-${l+1}`, loc: `호기:${a+1} / 연:${b+1} / 단:${l+1}` };
+                        } else {
+                            dummy.scale.set(0,0,0);
+                            dummy.updateMatrix();
+                            rackMesh.setMatrixAt(idx, dummy.matrix);
+                            instanceInfo[idx] = null;
+                        }
+                        idx++;
+                    }
+                }
+            }
+        }
+        mainGroup.add(rackMesh);
+        const headerX = (BAYS/2 * 1.3) + 3;
+        const headerRail = new THREE.Mesh(new THREE.BoxGeometry(2, 0.2, 90), new THREE.MeshPhongMaterial({color:0x888888}));
+        headerRail.position.set(headerX, 0.5, 0);
+        mainGroup.add(headerRail);
+        addLabel("MAIN WAREHOUSE", 0, 18, 0, 4, 0xaaaaaa);
+        scene.add(mainGroup);
+
+        // --- 5. Common Duct (터널 컨베이어) ---
+        const ductGroup = new THREE.Group();
+        const startX = 40 + headerX; // 메인 헤더 위치
+        const endX = -50;           // B동 리프터 입구
+        const ductLength = Math.abs(startX - endX);
+        const ductCenter = (startX + endX) / 2;
+
+        const ductPath = new THREE.Mesh(new THREE.BoxGeometry(ductLength, 0.5, 3), new THREE.MeshLambertMaterial({color:0x333333}));
+        ductPath.position.set(ductCenter, 0.5, 0);
+        ductGroup.add(ductPath);
+        
+        const ductCover = new THREE.Mesh(new THREE.BoxGeometry(ductLength, 4, 6), new THREE.MeshBasicMaterial({color:0x00ffff, wireframe:true, transparent:true, opacity:0.1}));
+        ductCover.position.set(ductCenter, 2.5, 0);
+        ductGroup.add(ductCover);
+
+        const lifterTower = new THREE.Group();
+        lifterTower.position.set(endX, 0, 0);
+        const towerFrame = new THREE.Mesh(new THREE.BoxGeometry(6, 30, 6), new THREE.MeshBasicMaterial({color:0x555555, wireframe:true}));
+        towerFrame.position.y = 15;
+        lifterTower.add(towerFrame);
+        ductGroup.add(lifterTower);
+
+        addLabel("COMMON DUCT", ductCenter, 7, 0, 2.5, 0x00ffff);
+        scene.add(ductGroup);
+
+        // --- 6. Building B (수직반송기 위치) ---
+        const bDong = new THREE.Group();
+        bDong.position.set(-70, 0, 0);
+        const floors = [{ name: "B1F", y: 0 }, { name: "2F", y: 12 }, { name: "3F", y: 24 }];
+        floors.forEach(f => {
+            const plate = new THREE.Mesh(new THREE.BoxGeometry(30, 0.5, 40), new THREE.MeshLambertMaterial({color:0x222222}));
+            plate.position.y = f.y;
+            bDong.add(plate);
+            addLabel(f.name, 0, f.y + 2, 22, 2, 0xffffff);
+            const inConv = new THREE.Mesh(new THREE.BoxGeometry(10, 0.5, 2), new THREE.MeshPhongMaterial({color:0xff8c00}));
+            inConv.position.set(15, f.y + 0.5, 0);
+            bDong.add(inConv);
+        });
+        addLabel("B-DONG", 0, 30, 0, 3, 0xffffff);
+        scene.add(bDong);
+
+        // --- 7. Animation & Interaction ---
+        const cargo = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1, 1.2), new THREE.MeshLambertMaterial({color:0x00ff00}));
+        scene.add(cargo);
+        const lifterCar = new THREE.Mesh(new THREE.BoxGeometry(4, 0.5, 4), new THREE.MeshLambertMaterial({color:0xff3333}));
+        lifterCar.position.set(endX, 0.5, 0);
+        scene.add(lifterCar);
+
+        let state = 0, timer = 0, targetFloorY = 0;
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            
+            raycaster.setFromCamera(mouse, camera);
+            const hits = raycaster.intersectObject(rackMesh);
+            if(hits.length > 0 && instanceInfo[hits[0].instanceId]) {
+                const info = instanceInfo[hits[0].instanceId];
+                tooltip.style.display = 'block';
+                tooltip.innerHTML = `<span class="tp-label">ID:</span>${info.id}<br><span class="tp-label">위치:</span>${info.loc}`;
+            } else { tooltip.style.display = 'none'; }
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if(state === 0) { // 생성
+                cargo.position.set(70, 2, (Math.random()*40)-20);
+                cargo.visible = true; targetFloorY = floors[Math.floor(Math.random()*3)].y + 1;
+                state = 1;
+            } else if(state === 1) { // 헤더 정렬
+                if(cargo.position.x < startX) cargo.position.x += 0.5;
+                cargo.position.z *= 0.94;
+                if(Math.abs(cargo.position.z) < 0.1) state = 2;
+            } else if(state === 2) { // 공동구 터널 통과
+                cargo.position.x -= 0.8;
+                if(cargo.position.x <= endX) state = 3;
+            } else if(state === 3) { // 리프터 상승
+                lifterCar.position.y += (targetFloorY - 1 - lifterCar.position.y) * 0.05;
+                cargo.position.y = lifterCar.position.y + 1;
+                if(Math.abs(cargo.position.y - targetFloorY) < 0.2) state = 4;
+            } else if(state === 4) { // B동 입고
+                cargo.position.x -= 0.5;
+                if(cargo.position.x < -75) {
+                    cargo.visible = false; state = 5; timer = 0;
+                }
+            } else if(state === 5) { // 리셋
+                timer++; lifterCar.position.y += (0.5 - lifterCar.position.y) * 0.05;
+                if(timer > 60) state = 0;
+            }
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

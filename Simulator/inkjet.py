@@ -3,7 +3,7 @@ import socket
 import threading
 
 HOST = '0.0.0.0'  # 모든 인터페이스
-PORT = 9200       # 원하는 포트 번호
+PORT = 9100       # 원하는 포트 번호
 
 clients = []
 

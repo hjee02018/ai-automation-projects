@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "jFUvE2zEdsQ=",
+  "success": true,
+  "projectFilePath": "C:\\Project\\ai-automation-projects\\WPF-Sample\\EmulatorTrial\\EmulatorTrial.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\HJ-YANG\\.nuget\\packages\\microsoft.web.webview2\\1.0.3796-prerelease\\microsoft.web.webview2.1.0.3796-prerelease.nupkg.sha512"
+  ],
+  "logs": []
+}
