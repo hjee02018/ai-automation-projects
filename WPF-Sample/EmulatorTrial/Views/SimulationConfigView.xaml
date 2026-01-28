@@ -17,7 +17,42 @@
                        FontWeight="Bold"
                        Foreground="#111827"
                        Margin="0,0,0,12"/>
+            
+            <!-- Speed Settings -->
+            <TextBlock Text="S/C Type"
+                       FontSize="11"
+                       FontWeight="Bold"
+                       Foreground="#6B7280"
+                       Margin="0,0,0,6"/>
 
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                    <!--<ComboBox>-->
+                        <!--<ComboBoxItem TextInput="Single" ></ComboBoxItem>-->
+                        <!--<ComboBoxItem TextInput="Twin" > </ComboBoxItem>-->
+                    <!--</ComboBox>-->
+                    <TextBlock Text="Bed Type (Single/Twin)"
+                               FontSize="10"
+                               Foreground="#6B7280"/>
+                    <TextBox Text="{Binding Config.MaxTravelSpeed, Mode=TwoWay}"
+                             Height="28"/>
+                </StackPanel>
+
+                <!--<StackPanel Grid.Column="1" Margin="6,0,0,0">
+                    <TextBlock Text="Max Hoist Speed (m/s)"
+                               FontSize="10"
+                               Foreground="#6B7280"/>
+                    <TextBox Text="{Binding Config.MaxHoistSpeed, Mode=TwoWay}"
+                             Height="28"/>
+                </StackPanel>-->
+            </Grid>
+
+            
             <!-- Speed Settings -->
             <TextBlock Text="Speed Limits"
                        FontSize="11"

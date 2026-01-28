@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRM 3D Digital Twin</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111827;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #3B82F6;
+            font-family: sans-serif;
+            font-size: 12px;
+            pointer-events: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        #status-panel {
+            position: absolute;
+            top: 35px;
+            left: 10px;
+            color: #10B981;
+            font-family: monospace;
+            font-size: 11px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        #controls-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #9CA3AF;
+            font-family: sans-serif;
+            font-size: 11px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">SRM Digital Twin Engine Ready</div>
+    <div id="status-panel">TRAVEL: 0.00 | LIFT: 0.00 | FORK: 0.00</div>
+    <div id="controls-hint">좌클릭: 회전 | 우클릭: 이동 | 휠: 확대/축소</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // 1. Scene & Camera Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111827);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 2. OrbitControls (Camera Interaction)
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        camera.position.set(20, 15, 20);
+        controls.update();
+
+        // 3. Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        // 4. Grid Helper (Floor)
+        const gridHelper = new THREE.GridHelper(100, 40, 0x374151, 0x1F2937);
+        scene.add(gridHelper);
+
+        // 5. Stacker Crane Model (Hierarchy Structure)
+        // Group: Travel Movement (X-axis)
+        const srmGroup = new THREE.Group();
+        scene.add(srmGroup);
+
+        // Mast: Vertical Column
+        const mastGeometry = new THREE.BoxGeometry(0.8, 15, 0.8);
+        const mastMaterial = new THREE.MeshStandardMaterial({ color: 0x3B82F6 });
+        const mast = new THREE.Mesh(mastGeometry, mastMaterial);
+        mast.position.y = 7.5;
+        srmGroup.add(mast);
+
+        // Carriage: Lifting Part (Y-axis)
+        const carriageGeometry = new THREE.BoxGeometry(1.2, 0.4, 1.5);
+        const carriageMaterial = new THREE.MeshStandardMaterial({ color: 0x8B5CF6 });
+        const carriage = new THREE.Mesh(carriageGeometry, carriageMaterial);
+        srmGroup.add(carriage);
+
+        // Fork: Load Part (Z-axis)
+        const forkGeometry = new THREE.BoxGeometry(1.0, 0.1, 1.4);
+        const forkMaterial = new THREE.MeshStandardMaterial({ color: 0x10B981 });
+        const fork = new THREE.Mesh(forkGeometry, forkMaterial);
+        fork.position.y = 0.25;
+        carriage.add(fork);
+
+        // Fork Sensor: Visualization
+        const sensorGeo = new THREE.SphereGeometry(0.1, 8, 8);
+        const sensorMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const sensor = new THREE.Mesh(sensorGeo, sensorMat);
+        sensor.position.set(0, 0.1, 0.7);
+        fork.add(sensor);
+
+        // 6. External Interface (Called from C#)
+        // No auto-movement code here. Only reacts to parameters.
+        window.updateSrm = function (travel, lift, forkPos) {
+            // Update Positions
+            srmGroup.position.x = travel;
+            carriage.position.y = lift;
+            fork.position.z = forkPos;
+
+            // Update Sensor Color based on fork extension
+            if (Math.abs(forkPos) > 0.1) {
+                sensor.material.color.set(0x00ff00); // Active (Green)
+            } else {
+                sensor.material.color.set(0xff0000); // Idle (Red)
+            }
+
+            // Update UI Panel
+            document.getElementById('status-panel').innerText =
+                `TRAVEL: ${travel.toFixed(2)} | LIFT: ${lift.toFixed(2)} | FORK: ${forkPos.toFixed(2)}`;
+        };
+
+        // 7. Core Animation Loop (Rendering Only)
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Required for damping effect and smooth camera movement
+            controls.update();
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start Rendering
+        animate();
+    </script>
+</body>
+</html>

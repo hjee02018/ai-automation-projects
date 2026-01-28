@@ -47,8 +47,8 @@
                     <TextBlock Text="{Binding MemoryUsageText}" HorizontalAlignment="Right" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
                 </DockPanel>
                 <Grid>
-                    <ProgressBar Value="{Binding TotalMemoryPercentage}" Height="6" Foreground="#bbf7d0" Background="#f1f5f9" BorderThickness="0"/>
                     <ProgressBar Value="{Binding ProcessMemoryPercentage}" Height="6" Foreground="#10B981" Background="Transparent" BorderThickness="0"/>
+                    <ProgressBar Value="{Binding TotalMemoryPercentage}" Height="6" Foreground="#bbf7d0" Background="#f1f5f9" BorderThickness="0"/>
                 </Grid>
 
             </StackPanel>

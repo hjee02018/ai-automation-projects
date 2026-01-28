@@ -24,5 +24,10 @@ namespace EmulatorTrial.Views
         {
             InitializeComponent();
         }
+
+        private void ComboBoxItem_TextInput(object sender, TextCompositionEventArgs e)
+        {
+
+        }
     }
 }

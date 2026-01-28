@@ -15,11 +15,33 @@ namespace EmulatorTrial.Services
         private TcpListener _listener;
         private bool _isRunning;
         private readonly List<TcpClient> _connectedClients = new List<TcpClient>();
+        private readonly ProtocolParserService _parser;
+
 
         // 외부(ViewModel/Engine)에서 구독할 이벤트
         public event Action<string, string> OnMessageReceived; // 발신자, 메시지
         public event Action<string> OnLogMessage;              // 로그 출력용
         public event Action<int> OnClientCountChanged;       // 연결된 클라이언트 수 변경
+
+        // 생성자 추가 必
+        public TcpServerService(ProtocolParserService parser)
+        {
+            _parser = parser;
+        }
+
+        private void HandleReceiveData(string rawMsg)
+        {
+            var parsedData = _parser.ParsePacket(rawMsg);
+            if(parsedData.ContainsKey("_MessageID"))
+            {
+                // 2단계: 분석된 데이터를 바탕으로 장비 상태 업데이트 (ViewModel 또는 Engine)
+                // 예: NotifyEquipmentUpdate(parsedData);
+
+                // 3단계: 자동 응답 발송 (ACK 등)
+                string response = _parser.CreateResponse(parsedData["_MessageID"]);
+                //SendMessage(response);
+            }
+        }
 
         public async Task StartListening(int port = 18888)
         {

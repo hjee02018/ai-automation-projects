@@ -7,26 +7,21 @@
         xmlns:views="clr-namespace:EmulatorTrial.Views"
         xmlns:conv="clr-namespace:EmulatorTrial.Converters"
         mc:Ignorable="d"
-        Title="SRM(Stacker Crane) Industrial Emulator - Advanced P2 Sim" Height="900" Width="1350"
+        Title="SRM(Stacker Crane) Industrial Emulator - Advanced P2 Sim" Height="900" Width="1560"
         Background="#F3F4F6">
 
     <Window.Resources>
-        <!-- Boolean to Visibility Converter -->
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
-        <!-- 네임스페이스를 EmulatorTrial.Converters로 지정하여 컨버터를 등록합니다. -->
         <conv:WidthConverter x:Key="WidthConverter" />
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header -->
             <RowDefinition Height="*"/>
-            <!-- Content -->
         </Grid.RowDefinitions>
 
-        <!-- 1. Header Section -->
         <Border Background="#1F2937" Padding="20,12" Grid.Row="0">
             <DockPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -37,7 +32,6 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Server Status Indicator -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border Background="#111827" Padding="15,7" CornerRadius="8" BorderBrush="#374151" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
@@ -64,42 +58,38 @@
             </DockPanel>
         </Border>
 
-        <!-- 2. Main Content Section -->
         <Grid Grid.Row="1" Margin="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="360"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="260"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Sidebar: 설비 목록 및 시뮬레이션 제어 -->
             <Border Grid.Column="0" Background="White" CornerRadius="12" Margin="6" BorderBrush="#E5E7EB" BorderThickness="1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <!-- Title -->
                         <RowDefinition Height="*"/>
-                        <!-- Scrollable Content -->
                         <RowDefinition Height="Auto"/>
-                        <!-- Control Buttons -->
                     </Grid.RowDefinitions>
 
                     <Border Background="#F9FAFB" CornerRadius="12,12,0,0" Padding="15" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
                         <TextBlock Text="SRM Physical Simulation" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
                     </Border>
 
-                    <!-- 중간 영역: 설비 리스트 및 상태 모니터링 -->
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" RenderTransformOrigin="0.497,0.439">
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="15">
-                            <!-- 설비 리스트 뷰 -->
                             <views:EquipmentListView x:Name="EquipmentListControl" Margin="0,0,0,15"/>
 
                             <Separator Background="#F3F4F6" Margin="0,10"/>
 
-                            <!-- [신규 추가] 물리적 데이터 및 처리량 (Physical Metrics) -->
+                            <!--<views:SimulationConfigView x:Name="ConfigControl" Margin="0,0,0,15"/>-->
+
+                            <Separator Background="#F3F4F6" Margin="0,10"/>
+
                             <TextBlock Text="REAL-TIME METRICS" FontSize="11" FontWeight="Bold" Foreground="#6B7280" Margin="2,0,0,8"/>
                             <Border Background="#F3F4F6" CornerRadius="8" Padding="12" Margin="0,0,0,15">
                                 <StackPanel>
-                                    <!-- 처리량 섹션 -->
                                     <Grid Margin="0,0,0,12">
                                         <StackPanel>
                                             <TextBlock Text="Throughput (Efficiency)" FontSize="10" Foreground="#6B7280" FontWeight="SemiBold"/>
@@ -113,7 +103,6 @@
                                         </Border>
                                     </Grid>
 
-                                    <!-- 물리적 좌표/속도 데이터 섹션 -->
                                     <UniformGrid Columns="2">
                                         <StackPanel Margin="0,0,5,10">
                                             <TextBlock Text="POSITION X (BAY)" FontSize="10" Foreground="#9CA3AF"/>
@@ -137,12 +126,10 @@
 
                             <Separator Background="#F3F4F6" Margin="0,10"/>
 
-                            <!-- 시스템 리소스 및 에러 주입 메뉴 -->
                             <views:PerformMonitorView x:Name="HealthMonitorControl" Margin="0,10,0,10"/>
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!-- 하단 영역: 시뮬레이션 실행 버튼 -->
                     <Border Grid.Row="2" Padding="15" Background="#F9FAFB" CornerRadius="0,0,12,12" BorderBrush="#E5E7EB" BorderThickness="0,1,0,0">
                         <StackPanel>
                             <Button Content="START SIMULATION" 
@@ -178,7 +165,6 @@
                 </Grid>
             </Border>
 
-            <!-- Main Operational Area (Protocol & 3D) -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -192,7 +178,6 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Toolbar -->
                         <Border Padding="15,10" Background="#1F2937">
                             <DockPanel>
                                 <ToggleButton x:Name="BtnShowSplit" Background="Transparent" BorderThickness="1" BorderBrush="#3B82F6" Padding="8,2" Cursor="Hand">
@@ -213,25 +198,19 @@
                             </DockPanel>
                         </Border>
 
-                        <!-- Content Grid with Split Support -->
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <!-- Protocol Area -->
                                 <ColumnDefinition Width="Auto"/>
-                                <!-- Splitter Area -->
                                 <ColumnDefinition Width="{Binding IsChecked, ElementName=BtnShowSplit, Converter={StaticResource WidthConverter}}"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Left: Protocol View -->
                             <views:CommunicationView x:Name="CommControl" Grid.Column="0" Margin="5"/>
 
-                            <!-- Center: Grid Splitter -->
                             <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                                           Background="#374151" ShowsPreview="True"
                                           Visibility="{Binding IsChecked, ElementName=BtnShowSplit, Converter={StaticResource BoolToVis}}"/>
 
-                            <!-- Right: WebView2 (HTML/3D) -->
                             <Border Grid.Column="2" BorderBrush="#374151" BorderThickness="1,0,0,0" 
                                     Visibility="{Binding IsChecked, ElementName=BtnShowSplit, Converter={StaticResource BoolToVis}}">
                                 <wv2:WebView2 x:Name="WebView3D" Margin="1" Source="about:blank"/>
@@ -240,10 +219,27 @@
                     </Grid>
                 </Border>
 
-                <!-- Bottom: Logs -->
                 <Border Grid.Row="1" Background="White" CornerRadius="12" Margin="6" BorderBrush="#E5E7EB" BorderThickness="1">
                     <views:LogView x:Name="LogControl"/>
                 </Border>
+            </Grid>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <views:SimulationConfigView Grid.Row="0" x:Name="ConfigControl" Margin="0,0,0,10"/>
+
+                <Button Grid.Row="1" Content="SAVE CONFIGURATION" 
+            Height="40" Margin="5"
+            Background="#3B82F6" Foreground="White" FontWeight="Bold">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </Grid>
         </Grid>
     </Grid>

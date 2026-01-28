@@ -11,6 +11,7 @@ namespace EmulatorTrial
     {
         private EquipmentViewModel _viewModel;
         private TcpServerService _tcpServer;
+        private ProtocolParserService _tcpParser;
 
 
         public MainWindow()
@@ -21,7 +22,7 @@ namespace EmulatorTrial
 
             // 26.01.26 TCP 연결 추가
             // 1. TCP 서버 서비스 인스턴스화
-            _tcpServer = new TcpServerService();
+            _tcpServer = new TcpServerService(_tcpParser);
 
             // 2. 이벤트 구독 (메시지 수신 및 로그 처리)
             _tcpServer.OnMessageReceived += (sender, msg) => {

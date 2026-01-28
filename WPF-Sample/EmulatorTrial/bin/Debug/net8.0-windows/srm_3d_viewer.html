@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRM 3D Digital Twin</title>
+    <title>SRM 3D Digital Twin - Log File Playback</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #111827; }
         canvas { display: block; }
@@ -13,6 +13,42 @@
             pointer-events: none; text-transform: uppercase; font-weight: bold;
             z-index: 10;
         }
+        #status-panel {
+            position: absolute; top: 35px; left: 10px;
+            color: #10B981; font-family: monospace; font-size: 11px;
+            background: rgba(0,0,0,0.7); padding: 8px; border-radius: 4px;
+            border-left: 3px solid #10B981;
+            z-index: 10;
+        }
+        #playback-ui {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(31, 41, 55, 0.95);
+            padding: 15px; border-radius: 12px;
+            display: flex; flex-direction: column; gap: 12px;
+            width: 85%; max-width: 700px;
+            border: 1px solid #4B5563;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 20;
+        }
+        .controls-row { display: flex; align-items: center; gap: 12px; }
+        #drop-zone {
+            width: 100%; height: 50px;
+            border: 2px dashed #4B5563; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #9CA3AF; font-size: 13px; font-family: sans-serif;
+            transition: all 0.3s; cursor: pointer;
+        }
+        #drop-zone.hover { border-color: #3B82F6; background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+        input[type=range] { flex-grow: 1; cursor: pointer; accent-color: #3B82F6; }
+        button {
+            background: #3B82F6; color: white; border: none;
+            padding: 8px 20px; border-radius: 6px; cursor: pointer;
+            font-weight: bold; font-size: 13px; transition: background 0.2s;
+        }
+        button:hover { background: #2563EB; }
+        button:disabled { background: #4B5563; cursor: not-allowed; }
+        #time-display { color: #F3F4F6; font-family: monospace; font-size: 14px; min-width: 110px; text-align: right; }
         #controls-hint {
             position: absolute; bottom: 10px; left: 10px;
             color: #9CA3AF; font-family: sans-serif; font-size: 11px;
@@ -21,87 +57,220 @@
     </style>
 </head>
 <body>
-    <div id="info">SRM Real-time Physics Engine Ready</div>
+    <div id="info">SRM Digital Twin - Log File Playback Mode</div>
+    <div id="status-panel">
+        [EQUIPMENT STATUS]<br>
+        TRAVEL(BAY): 0.00m<br>
+        LIFT(LVL): 0.00m<br>
+        FORK(ROW): 0.00m
+    </div>
+
+    <!-- Playback UI -->
+    <div id="playback-ui">
+        <div id="drop-zone">이곳에 로그 파일(.txt, .csv)을 드래그하거나 클릭하여 선택하세요</div>
+        <input type="file" id="file-input" style="display: none;" accept=".txt,.csv,.log">
+        
+        <div class="controls-row">
+            <button id="btn-play" disabled>재생</button>
+            <input type="range" id="timeline" min="0" max="100" value="0" disabled>
+            <span id="time-display">0.0s / 0.0s</span>
+        </div>
+    </div>
+
     <div id="controls-hint">마우스 좌클릭: 회전 | 우클릭: 이동 | 휠: 확대/축소</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- OrbitControls 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     
     <script>
-        // 1. Scene Setup
+        // 1. Scene & Camera Setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x111827);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        scene.background = new THREE.Color(0x0f172a);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
         document.body.appendChild(renderer.domElement);
 
-        // 2. OrbitControls 초기화
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // 부드러운 감속 효과
-        controls.dampingFactor = 0.05;
-        controls.screenSpacePanning = false;
-        controls.minDistance = 5;
-        controls.maxDistance = 100;
+        controls.enableDamping = true;
+        camera.position.set(30, 20, 35);
+        controls.target.set(10, 5, 0);
 
-        // 3. Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(10, 20, 10);
-        scene.add(directionalLight);
+        // 2. Lighting & Environment
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        sunLight.position.set(20, 50, 10);
+        scene.add(sunLight);
 
-        // 4. Grid Helper (Floor)
-        const gridHelper = new THREE.GridHelper(200, 50, 0x374151, 0x1F2937);
-        scene.add(gridHelper);
+        const createEnvironment = () => {
+            const railMat = new THREE.MeshStandardMaterial({ color: 0x475569 });
+            const rail1 = new THREE.Mesh(new THREE.BoxGeometry(100, 0.2, 0.5), railMat);
+            const rail2 = rail1.clone();
+            rail1.position.set(40, 0.1, 0.6);
+            rail2.position.set(40, 0.1, -0.6);
+            scene.add(rail1, rail2);
 
-        // 5. Stacker Crane Model Group
+            const rackMat = new THREE.MeshStandardMaterial({ color: 0x334155, transparent: true, opacity: 0.3 });
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 5; j++) {
+                    const shelf = new THREE.Mesh(new THREE.BoxGeometry(4, 0.1, 3), rackMat);
+                    shelf.position.set(i * 8, j * 3 + 0.5, -3.5);
+                    scene.add(shelf);
+                }
+            }
+        };
+        createEnvironment();
+
+        // 3. Stacker Crane Model
         const srmGroup = new THREE.Group();
         scene.add(srmGroup);
+        const mastLeft = new THREE.Mesh(new THREE.BoxGeometry(0.6, 16, 0.6), new THREE.MeshStandardMaterial({ color: 0x3b82f6 }));
+        const mastRight = mastLeft.clone();
+        mastLeft.position.set(-1.2, 8, 0); mastRight.position.set(1.2, 8, 0);
+        srmGroup.add(mastLeft, mastRight);
 
-        // Mast (Base)
-        const mastGeometry = new THREE.BoxGeometry(1, 15, 1);
-        const mastMaterial = new THREE.MeshStandardMaterial({ color: 0x3B82F6 });
-        const mast = new THREE.Mesh(mastGeometry, mastMaterial);
-        mast.position.y = 7.5;
-        srmGroup.add(mast);
+        const carriageGroup = new THREE.Group();
+        srmGroup.add(carriageGroup);
+        const carriageBody = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.5, 2.2), new THREE.MeshStandardMaterial({ color: 0x6d28d9 }));
+        carriageGroup.add(carriageBody);
 
-        // Carriage (Lift Part)
-        const carriageGeometry = new THREE.BoxGeometry(1.5, 0.5, 2);
-        const carriageMaterial = new THREE.MeshStandardMaterial({ color: 0x8B5CF6 });
-        const carriage = new THREE.Mesh(carriageGeometry, carriageMaterial);
-        carriage.position.y = 2; // Initial Lift Pos
-        srmGroup.add(carriage);
+        const fork = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.1, 1.6), new THREE.MeshStandardMaterial({ color: 0x10b981 }));
+        fork.position.y = 0.5;
+        carriageGroup.add(fork);
 
-        // Fork (Load Part)
-        const forkGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.8);
-        const forkMaterial = new THREE.MeshStandardMaterial({ color: 0x10B981 });
-        const fork = new THREE.Mesh(forkGeometry, forkMaterial);
-        fork.position.y = 0.3;
-        carriage.add(fork);
+        const sensorMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const sensor = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), sensorMat);
+        sensor.position.set(0, 0.1, 0.8);
+        fork.add(sensor);
 
-        camera.position.set(15, 10, 15);
-        controls.update(); // 카메라 위치 변경 후 컨트롤 업데이트
+        // 4. File Loading & Parsing Logic
+        let playbackLogs = [];
+        let isPlaying = false;
+        let currentTime = 0;
+        let maxTime = 0;
+        let lastTimestamp = 0;
 
-        // 6. Animation Logic
-        let travelPos = 0;
-        let direction = 1;
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const btnPlay = document.getElementById('btn-play');
+        const timeline = document.getElementById('timeline');
+        const timeDisplay = document.getElementById('time-display');
 
-        function animate() {
-            requestAnimationFrame(animate);
+        // File Selection Events
+        dropZone.onclick = () => fileInput.click();
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('hover'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('hover');
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('hover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        };
+        fileInput.onchange = (e) => { if (e.target.files.length) handleFile(e.target.files[0]); };
 
-            // Simulate Movement (Traveling & Lifting)
-            travelPos += 0.05 * direction;
-            if (travelPos > 20 || travelPos < -20) direction *= -1;
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                parseLogFile(text, file.name);
+            };
+            reader.readAsText(file);
+        }
 
-            srmGroup.position.z = travelPos;
-            carriage.position.y = 2 + (Math.sin(Date.now() * 0.001) + 1) * 5; 
+        function parseLogFile(text, fileName) {
+            try {
+                let data = [];
+                // JSON 형식 시도
+                if (text.trim().startsWith('[') || text.trim().startsWith('{')) {
+                    data = JSON.parse(text);
+                } else {
+                    // CSV/TXT 형식 시도 (t, x, y, z)
+                    const lines = text.split('\n');
+                    lines.forEach(line => {
+                        const parts = line.split(/[,\s\t]+/).map(p => parseFloat(p.trim()));
+                        if (parts.length >= 4 && !isNaN(parts[0])) {
+                            data.push({ t: parts[0], x: parts[1], y: parts[2], z: parts[3] });
+                        }
+                    });
+                }
+
+                if (data.length > 0) {
+                    playbackLogs = data.sort((a, b) => a.t - b.t);
+                    maxTime = playbackLogs[playbackLogs.length - 1].t;
+                    timeline.max = maxTime;
+                    timeline.disabled = false;
+                    btnPlay.disabled = false;
+                    currentTime = 0;
+                    isPlaying = false;
+                    btnPlay.innerText = "재생";
+                    updateVisualsAtTime(0);
+                    dropZone.innerText = `로드 완료: ${fileName} (${data.length} pts)`;
+                } else {
+                    throw new Error("유효한 데이터 포인트를 찾을 수 없습니다.");
+                }
+            } catch (err) {
+                alert("파일 파싱 오류: " + err.message);
+                dropZone.innerText = "오류 발생. 다시 시도하세요.";
+            }
+        }
+
+        // 5. Update Visuals
+        function updateVisualsAtTime(time) {
+            if (playbackLogs.length === 0) return;
+
+            let nextIdx = playbackLogs.findIndex(log => log.t >= time);
+            if (nextIdx === -1) nextIdx = playbackLogs.length - 1;
+            let prevIdx = Math.max(0, nextIdx - 1);
+
+            const prev = playbackLogs[prevIdx];
+            const next = playbackLogs[nextIdx];
+            let ratio = (next.t === prev.t) ? 1 : (time - prev.t) / (next.t - prev.t);
+            ratio = Math.max(0, Math.min(1, ratio));
+
+            const x = prev.x + (next.x - prev.x) * ratio;
+            const y = prev.y + (next.y - prev.y) * ratio;
+            const z = prev.z + (next.z - prev.z) * ratio;
+
+            srmGroup.position.x = x;
+            carriageGroup.position.y = y;
+            fork.position.z = z;
+
+            sensor.material.color.setHex(Math.abs(z) > 0.1 ? 0x22C55E : 0xEF4444);
+            document.getElementById('status-panel').innerHTML = 
+                `[EQUIPMENT STATUS]<br>TRAVEL: ${x.toFixed(2)}m<br>LIFT: ${y.toFixed(2)}m<br>FORK: ${z.toFixed(2)}m`;
             
-            // OrbitControls 업데이트 (Damping 효과를 위해 필요)
-            controls.update();
+            timeDisplay.innerText = `${(time/1000).toFixed(1)}s / ${(maxTime/1000).toFixed(1)}s`;
+            timeline.value = time;
+        }
 
+        btnPlay.onclick = () => {
+            isPlaying = !isPlaying;
+            btnPlay.innerText = isPlaying ? "일시정지" : "재생";
+            if (isPlaying) lastTimestamp = performance.now();
+        };
+
+        timeline.oninput = (e) => {
+            currentTime = parseInt(e.target.value);
+            updateVisualsAtTime(currentTime);
+        };
+
+        // 6. Animation Loop
+        function animate(now) {
+            requestAnimationFrame(animate);
+            if (isPlaying && playbackLogs.length > 0) {
+                const delta = (now - lastTimestamp);
+                lastTimestamp = now;
+                currentTime += delta;
+                if (currentTime >= maxTime) {
+                    currentTime = maxTime;
+                    isPlaying = false;
+                    btnPlay.innerText = "재생";
+                }
+                updateVisualsAtTime(currentTime);
+            } else {
+                lastTimestamp = now;
+            }
+            controls.update();
             renderer.render(scene, camera);
         }
 
@@ -111,7 +280,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        animate();
+        animate(0);
     </script>
 </body>
 </html>
